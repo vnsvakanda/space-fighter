@@ -59,18 +59,36 @@ class SpaceGame(GameApp):
         if self.bomb_power.value == BOMB_FULL_POWER:
             self.bomb_power.value = 0
 
-            self.bomb_canvas_id = self.canvas.create_oval(
-                self.ship.x - BOMB_RADIUS,
-                self.ship.y - BOMB_RADIUS,
-                self.ship.x + BOMB_RADIUS,
-                self.ship.y + BOMB_RADIUS
-            )
+            self.circle()
+            self.special_canvas()
 
-            self.after(200, lambda: self.canvas.delete(self.bomb_canvas_id))
+            self.hide_access()
+            self.dissapear_over_time()
 
-            for e in self.enemies:
-                if self.ship.distance_to(e) <= BOMB_RADIUS:
-                    e.to_be_deleted = True
+            self.enemy_destroying()
+
+    def circle(self):
+        self.bomb_canvas_id = self.canvas.create_oval(
+            self.ship.x - BOMB_RADIUS,
+            self.ship.y - BOMB_RADIUS,
+            self.ship.x + BOMB_RADIUS,
+            self.ship.y + BOMB_RADIUS
+        )
+
+    def enemy_destroying(self):
+        for e in self.enemies:
+            if self.ship.distance_to(e) <= BOMB_RADIUS:
+                e.to_be_deleted = True
+
+    def hide_access(self):
+        self.after(200, lambda: self.canvas.delete(self.bomb_canvas_id))
+
+    def special_canvas(self):
+        self.special_canvas_id = self.canvas.create_rectangle(
+            300, 500, 500, 300, outline="#1f1", fill="#1f1", width=10)
+
+    def dissapear_over_time(self):
+        self.after(2500, lambda: self.canvas.delete(self.special_canvas_id))
 
     def update_score(self):
         self.score_wait += 1
